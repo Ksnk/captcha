@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# point you own directory here
+RewriteBase /projects/captcha/sample
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule (captcha_\d+_\d+.png) ../captcha.php?getpicture=$1 [L,QSA]
+
