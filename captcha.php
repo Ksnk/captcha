@@ -63,6 +63,7 @@ class captcha
          * получится
          *  self::$PICTURE_PATH = realpath(__DIR__ . '/../upload/captcha');
          *  self::$PICTURE_URI = '/upload/captcha/';
+         * Сейчас используется подгрузка информации из сессии, смю пример использования
          */
         if (!isset ($setup_complete)
             && !empty($_SESSION['captcha_setup'])
@@ -113,35 +114,13 @@ class captcha
     }
 
     /**
-     * internal function. Return pointer for captcha record from depths of Session array.
-     * @param bool $must_exists - do i need to create this record or just report absence.
-     * @return mixed
-     */
-    private function &gimmeRoll($must_exists = false)
-    {
-        if (!isset($_SESSION['captcha']) || !is_array($_SESSION['captcha']))
-            $_SESSION['captcha'] = array();
-        $roll =& $_SESSION['captcha'];
-        if (!isset($roll[$this->formName]))
-            if ($must_exists)
-                return false;
-            else
-                $roll[$this->formName] = array();
-        $roll =& $roll[$this->formName];
-        if (!isset($roll['time'])) {
-            $roll['time'] = time(); // sign a start of captcha life
-        }
-        return $_SESSION['captcha'][$this->formName];
-    }
-
-    /**
      * clear unusefull files with captcha pictures
      * @param bool $myfiles
      * @return string
      */
     function clearOldFiles($myfiles = false)
     {
-        if(empty(self::$PICTURE_PATH)) return;
+        if (empty(self::$PICTURE_PATH)) return;
         if ($myfiles) { // clear own files
             $files = glob(self::$PICTURE_PATH . '/captcha_' . $this->formName . '_*.png');
             if (!empty($files)) {
@@ -203,6 +182,28 @@ class captcha
         header('Expires: ' . gmdate('D, d M Y H:i:s', $expires) . ' GMT');
         header('Content-type:image/png');
         readfile($file);
+    }
+
+    /**
+     * internal function. Return pointer for captcha record from depths of Session array.
+     * @param bool $must_exists - do i need to create this record or just report absence.
+     * @return mixed
+     */
+    private function &gimmeRoll($must_exists = false)
+    {
+        if (!isset($_SESSION['captcha']) || !is_array($_SESSION['captcha']))
+            $_SESSION['captcha'] = array();
+        $roll =& $_SESSION['captcha'];
+        if (!isset($roll[$this->formName]))
+            if ($must_exists)
+                return false;
+            else
+                $roll[$this->formName] = array();
+        $roll =& $roll[$this->formName];
+        if (!isset($roll['time'])) {
+            $roll['time'] = time(); // sign a start of captcha life
+        }
+        return $_SESSION['captcha'][$this->formName];
     }
 
     /**
