@@ -83,6 +83,11 @@ class captcha
         }
     }
 
+    /**
+     * Изменение параметров построения капчи из внешнего мира.
+     *
+     * @param array $opt - массив с именами - приватными параметрами
+     */
     static function setup($opt = array())
     {
         if (!empty($opt) && is_array($opt)) {
